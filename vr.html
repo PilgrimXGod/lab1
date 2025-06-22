@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VR Сцена: Циліндр скочується (Фінальне виправлення)</title>
+  <title>VR Сцена: Циліндр скочується (Виправлення Easing)</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,19 +36,19 @@
     </a-plane>
 
     <!-- 5. Контейнер для циліндра та сил -->
-    <!-- ВИПРАВЛЕНО: easing: 'ease-in' тепер в одинарних лапках -->
+    <!-- ВИПРАВЛЕНО: easing: easeInQuad (стандартна назва) -->
     <a-entity 
       id="rolling-body"
-      animation="property: position; from: 0 2.6 -6.6; to: 3.5 0.4 -3.8; dur: 5000; easing: 'ease-in'; loop: true;">
+      animation="property: position; from: 0 2.6 -6.6; to: 3.5 0.4 -3.8; dur: 5000; easing: easeInQuad; loop: true;">
       
       <!-- Циліндр -->
-      <!-- ВИПРАВЛЕНО: easing: 'linear' тепер в одинарних лапках -->
+      <!-- ВИПРАВЛЕНО: easing: linear (стандартна назва) -->
       <a-cylinder
         src="#metalTexture"
         radius="0.4"
         height="1.5"
         rotation="0 0 -90"
-        animation__rotation="property: rotation; from: 0 0 -90; to: 0 0 -1170; dur: 5000; easing: 'linear'; loop: true;">
+        animation__rotation="property: rotation; from: 0 0 -90; to: 0 0 -1170; dur: 5000; easing: linear; loop: true;">
       </a-cylinder>
 
       <!-- Вектори сил (без змін) -->
