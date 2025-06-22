@@ -18,11 +18,11 @@
     <a-light type="ambient" color="#888"></a-light>
     <a-light type="directional" intensity="1" position="-2 5 3"></a-light>
 
-    <!-- 3. Похила площина (ОСЬ ВОНА) -->
+    <!-- 3. Похила площина -->
     <a-plane
       src="#woodTexture"
       width="8"
-      height="4"
+      height="4.5"
       position="0 1.5 -5"
       rotation="-30 0 0">
     </a-plane>
@@ -49,18 +49,20 @@
         animation__rotation="property: rotation; from: 0 0 -90; to: -1080 0 -90; dur: 5000; easing: linear; loop: true;">
       </a-cylinder>
 
-      <!-- Вектори сил з правильною орієнтацією -->
-      <!-- Сила тяжіння (mg) - завжди вертикально вниз -->
+      <!-- 
+        ВЕКТОРИ СИЛ, РОЗСТАВЛЕНІ ПРАВИЛЬНО 
+      -->
+      <!-- Сила тяжіння (mg) - з центру мас, вертикально вниз -->
       <a-cone color="#ff3333" radius-bottom="0.05" height="1.5" position="0 -0.75 0"></a-cone>
       <a-text value="mg" color="#ff4d4d" position="0.2 -1.6 0" align="left" width="6"></a-text>
 
-      <!-- Сила нормальної реакції (N) - перпендикулярно площині -->
-      <a-cone color="#3366ff" radius-bottom="0.05" height="1.0" position="0 0 0" rotation="-30 0 0"></a-cone>
-      <a-text value="N" color="#4d94ff" position="-0.5 0.5 0" align="center" width="6"></a-text>
+      <!-- Сила нормальної реакції (N) - з точки дотику, перпендикулярно площині -->
+      <a-cone color="#3366ff" radius-bottom="0.05" height="1.0" position="0 -0.4 0" rotation="-30 0 0"></a-cone>
+      <a-text value="N" color="#4d94ff" position="-0.7 0.3 0" align="center" width="6"></a-text>
 
-      <!-- Сила тертя (f) - паралельно площині, проти руху -->
-      <a-cone color="#33cc33" radius-bottom="0.05" height="0.8" position="0 0 0" rotation="-30 180 0"></a-cone>
-      <a-text value="f" color="#4dff4d" position="0.5 -0.8 0" align="center" width="6"></a-text>
+      <!-- Сила тертя (f) - з точки дотику, паралельно площині, проти руху -->
+      <a-cone color="#33cc33" radius-bottom="0.05" height="0.8" position="0 -0.4 0" rotation="-30 180 0"></a-cone>
+      <a-text value="f" color="#4dff4d" position="0.7 -0.2 0" align="center" width="6"></a-text>
     </a-entity>
 
   </a-scene>
