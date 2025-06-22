@@ -52,15 +52,19 @@
         animation__rotation="property: rotation; from: 0 0 -90; to: -1080 0 -90; dur: 5000; easing: linear; loop: true;">
       </a-cylinder>
 
-      <!-- Вектори сил (без змін) -->
-      <a-cone color="red" radius-bottom="0.05" height="1.5" position="0 -1.2 0"></a-cone>
-      <a-text value="mg" color="red" position="0.2 -2.0 0" align="left" width="5"></a-text>
+      <!-- Сила тяжіння (mg) - завжди вертикально вниз -->
+      <a-cone color="#ff3333" radius-bottom="0.05" height="1.5" position="0 -0.75 0"></a-cone>
+      <a-text value="mg" color="#ff4d4d" position="0.2 -1.6 0" align="left" width="6"></a-text>
 
-      <a-cone color="blue" radius-bottom="0.05" height="1" position="0.3 0.5 0" rotation="0 0 -60"></a-cone>
-      <a-text value="N" color="blue" position="0.7 1.1 0" align="center" width="5"></a-text>
+      <!-- Сила нормальної реакції (N) - перпендикулярно площині -->
+      <!-- Ми обертаємо її на -30 градусів по осі X, так само, як і площину -->
+      <a-cone color="#3366ff" radius-bottom="0.05" height="1.0" position="0 0 0" rotation="-30 0 0"></a-cone>
+      <a-text value="N" color="#4d94ff" position="-0.5 0.5 0" align="center" width="6"></a-text>
 
-      <a-cone color="green" radius-bottom="0.05" height="0.8" position="-0.5 -0.2 0" rotation="0 0 120"></a-cone>
-      <a-text value="f" color="green" position="-1 -0.3 0" align="center" width="5"></a-text>
+      <!-- Сила тертя (f) - паралельно площині, проти руху -->
+      <!-- Обертаємо на -30 по X, щоб вирівняти з площиною, і на 180 по Y, щоб розвернути -->
+      <a-cone color="#33cc33" radius-bottom="0.05" height="0.8" position="0 -0.35 0" rotation="-30 180 0"></a-cone>
+      <a-text value="f" color="#4dff4d" position="0.5 -0.8 0" align="center" width="6"></a-text>
     </a-entity>
 
   </a-scene>
