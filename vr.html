@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VR Сцена: Циліндр скочується</title>
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <title>VR Сцена: Циліндр скочується (Виправлена версія)</title>
+  <!-- Використовуємо версію 1.7.0 з вашого прикладу -->
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
   <a-scene background="color: #2E2E2E">
     <!-- 1. Ассети (текстури) -->
     <a-assets>
-      <img id="woodTexture" src="assets/wood.jpg">
-      <img id="metalTexture" src="assets/noise.jpg">
+      <img id="woodTexture" src="assets/wood.jpg" crossorigin="anonymous">
+      <img id="metalTexture" src="assets/noise.png" crossorigin="anonymous">
     </a-assets>
 
     <!-- 2. Освітлення -->
@@ -22,59 +25,41 @@
       width="8"
       height="2.5"
       position="0 1.5 -5"
-      rotation="-30 0 0"
-      shadow="receive: true">
+      rotation="-30 0 0">
     </a-plane>
 
-    <!-- 4. "Земля" для тіней -->
+    <!-- 4. "Земля" -->
     <a-plane
       rotation="-90 0 0"
       width="20"
       height="20"
-      color="#4F4F4F"
-      shadow="receive: true">
+      color="#4F4F4F">
     </a-plane>
 
-    <!-- 5. Контейнер для циліндра, сил та анімації руху -->
-    <a-entity id="rolling-body" position="0 2.6 -6.6">
-      <!-- Анімація руху всього об'єкта -->
-      <a-animation
-        attribute="position"
-        from="0 2.6 -6.6"
-        to="3.5 0.4 -3.8"
-        dur="5000"
-        easing="ease-in"
-        repeat="indefinite">
-      </a-animation>
+    <!-- 5. Контейнер для циліндра та сил -->
+    <!-- Анімація руху записана як атрибут 'animation' -->
+    <a-entity 
+      id="rolling-body"
+      animation="property: position; from: 0 2.6 -6.6; to: 3.5 0.4 -3.8; dur: 5000; easing: ease-in; loop: true;">
       
       <!-- Циліндр -->
+      <!-- Анімація обертання записана як атрибут 'animation__rotation' -->
+      <!-- Ми використовуємо подвійне підкреслення, щоб додати ДРУГУ анімацію до того ж об'єкта -->
       <a-cylinder
         src="#metalTexture"
         radius="0.4"
         height="1.5"
         rotation="0 0 -90"
-        shadow="cast: true">
-        <!-- Анімація обертання самого циліндра -->
-        <a-animation
-          attribute="rotation"
-          from="0 0 -90"
-          to="0 0 -1170"
-          dur="5000"
-          easing="linear"
-          repeat="indefinite">
-        </a-animation>
+        animation__rotation="property: rotation; from: 0 0 -90; to: 0 0 -1170; dur: 5000; easing: linear; loop: true;">
       </a-cylinder>
 
-      <!-- Вектори сил (згруповані з циліндром) -->
-      <!-- Сила тяжіння (mg) - червоний -->
+      <!-- Вектори сил (без змін) -->
       <a-cone color="red" radius-bottom="0.05" height="1.5" position="0 -1.2 0"></a-cone>
       <a-text value="mg" color="red" position="0.2 -2.0 0" align="left" width="5"></a-text>
 
-      <!-- Сила реакції опори (N) - синій -->
       <a-cone color="blue" radius-bottom="0.05" height="1" position="0.3 0.5 0" rotation="0 0 -60"></a-cone>
       <a-text value="N" color="blue" position="0.7 1.1 0" align="center" width="5"></a-text>
 
-      <!-- Сила тертя (f) - зелений -->
       <a-cone color="green" radius-bottom="0.05" height="0.8" position="-0.5 -0.2 0" rotation="0 0 120"></a-cone>
       <a-text value="f" color="green" position="-1 -0.3 0" align="center" width="5"></a-text>
     </a-entity>
