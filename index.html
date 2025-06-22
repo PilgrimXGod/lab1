@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторна робота | Вибір сцени</title>
+    <style>
+        /* Базові стилі для сторінки */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        /* Контейнер для центрування контенту */
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Стиль заголовка */
+        h1 {
+            margin-top: 0;
+            color: #1a2c4e;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Група кнопок */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Проміжок між кнопками */
+        }
+
+        /* Стилі для кнопок-посилань */
+        .button {
+            display: inline-block;
+            padding: 15px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            min-width: 300px; /* Мінімальна ширина для однакового вигляду */
+            box-sizing: border-box; /* Враховуємо padding у ширину */
+        }
+        
+        .button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px); /* Легкий ефект підйому при наведенні */
+        }
+        
+        /* Різні кольори для кнопок для кращого розрізнення */
+        .button.vr { background-color: #28a745; }
+        .button.vr:hover { background-color: #218838; }
+        
+        .button.arjs { background-color: #ffc107; color: #333; }
+        .button.arjs:hover { background-color: #e0a800; }
+        
+        .button.mindar { background-color: #dc3545; }
+        .button.mindar:hover { background-color: #c82333; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Лабораторна робота</h1>
+        <p>Створення сцен у віртуальній та доповненій реальності</p>
+        
+        <div class="button-group">
+            <a href="vr.html" class="button vr">
+                Сцена у віртуальній реальності (VR)
+            </a>
+            <a href="arjs.html" class="button arjs">
+                Доповнена реальність (AR.js)
+            </a>
+            <a href="mindar.html" class="button mindar">
+                Доповнена реальність (MindAR)
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
