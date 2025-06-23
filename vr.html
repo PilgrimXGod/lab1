@@ -1,70 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VR Сцена: Циліндр скочується (Фінальна версія)</title>
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Giza Pyramids VR</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 </head>
 <body>
-  <a-scene background="color: #2E2E2E">
-    <!-- 1. Ассети (текстури) -->
-    <a-assets>
-      <img id="woodTexture" src="assets/wood.jpg" crossorigin="anonymous">
-      <img id="metalTexture" src="assets/noise.jpg" crossorigin="anonymous">
-    </a-assets>
+    <a-scene>
+        <!-- Асети (ресурси): текстури -->
+        <a-assets>
+            <img id="sandstone" src="./assets/sandstone.jpg">
+        </a-assets>
 
-    <!-- 2. Освітлення -->
-    <a-light type="ambient" color="#888"></a-light>
-    <a-light type="directional" intensity="1" position="-2 5 3"></a-light>
+        <!-- Небо та земля -->
+        <a-sky color="#ECEFF1"></a-sky>
+        <a-plane position="0 0 0" rotation="-90 0 0" width="200" height="200" color="#F5DEB3"></a-plane>
 
-    <!-- 3. Похила площина -->
-    <a-plane
-      src="#woodTexture"
-      width="8"
-      height="4.5"
-      position="0 1.5 -5"
-      rotation="-30 0 0">
-    </a-plane>
+        <!-- Камера з анімацією -->
+        <!-- Початкова позиція трохи збоку, щоб бачити анімацію "наїзду" -->
+        <a-camera position="0 15 50" fov="80">
+            <!-- Анімація, яка рухає камеру до центральної піраміди -->
+            <a-animation 
+                attribute="position"
+                to="0 10 25"
+                dur="5000"
+                easing="ease-in-out"
+                direction="alternate"
+                repeat="indefinite">
+            </a-animation>
+        </a-camera>
 
-    <!-- 4. "Земля" -->
-    <a-plane
-      rotation="-90 0 0"
-      width="20"
-      height="20"
-      color="#4F4F4F">
-    </a-plane>
+        <!-- Група для всіх пірамід для легкого маштабування та позиціонування -->
+        <a-entity id="pyramid-complex" position="0 0 -15">
+            
+            <!-- Піраміда Хеопса (1) - найбільша -->
+            <!-- Розміри: висота 145м, основа 230м -> 14.5, радіус 11.5 (масштаб 1:10) -->
+            <a-entity id="khufu-pyramid" position="25 0 -35">
+                <a-cone 
+                    src="#sandstone"
+                    height="14.5" 
+                    radius-bottom="11.5" 
+                    radius-top="0"
+                    segments-radial="4"
+                    position="0 7.25 0">
+                </a-cone>
+                <!-- Верхівка піраміди -->
+                <a-cone 
+                    color="gold"
+                    height="1.5" 
+                    radius-bottom="1.15"
+                    radius-top="0"
+                    segments-radial="4"
+                    position="0 13.75 0">
+                </a-cone>
+            </a-entity>
 
-    <!-- 5. Контейнер для циліндра та сил -->
-    <a-entity 
-      id="rolling-body"
-      animation="property: position; from: 0 2.6 -6.6; to: 0 0.8 -3.1; dur: 5000; easing: easeInQuad; loop: true;">
-      
-      <!-- Циліндр з правильною анімацією кочення -->
-      <a-cylinder
-        src="#metalTexture"
-        radius="0.4"
-        height="1.5"
-        rotation="0 0 -90"
-        animation__rotation="property: rotation; from: 0 0 -90; to: -1080 0 -90; dur: 5000; easing: linear; loop: true;">
-      </a-cylinder>
+            <!-- Піраміда Хефрена (2) - центральна -->
+            <!-- Розміри: висота 135м, основа 210м -> 13.5, радіус 10.5 -->
+            <a-entity id="khafre-pyramid" position="0 0 0">
+                <a-cone 
+                    src="#sandstone"
+                    height="13.5" 
+                    radius-bottom="10.5" 
+                    radius-top="0"
+                    segments-radial="4"
+                    position="0 6.75 0">
+                </a-cone>
+                <!-- Верхівка піраміди -->
+                <a-cone 
+                    color="gold"
+                    height="1.35" 
+                    radius-bottom="1.05"
+                    radius-top="0"
+                    segments-radial="4"
+                    position="0 12.825 0">
+                </a-cone>
+            </a-entity>
 
-      <!-- 
-        ВЕКТОРИ СИЛ, РОЗСТАВЛЕНІ ПРАВИЛЬНО 
-      -->
-      <!-- Сила тяжіння (mg) - з центру мас, вертикально вниз -->
-      <a-cone color="#ff3333" radius-bottom="0.05" height="1.5" position="0 -0.75 0"></a-cone>
-      <a-text value="mg" color="#ff4d4d" position="0.2 -1.6 0" align="left" width="6"></a-text>
+            <!-- Піраміда Мікеріна (3) - найменша -->
+            <!-- Розміри: висота 65м, основа 100м -> 6.5, радіус 5 -->
+            <a-entity id="menkaure-pyramid" position="-20 0 40">
+                <a-cone 
+                    src="#sandstone"
+                    height="6.5" 
+                    radius-bottom="5" 
+                    radius-top="0"
+                    segments-radial="4"
+                    position="0 3.25 0">
+                </a-cone>
+                <!-- Верхівка піраміди -->
+                <a-cone 
+                    color="gold"
+                    height="0.65" 
+                    radius-bottom="0.5"
+                    radius-top="0"
+                    segments-radial="4"
+                    position="0 6.175 0">
+                </a-cone>
+            </a-entity>
 
-      <!-- Сила нормальної реакції (N) - з точки дотику, перпендикулярно площині -->
-      <a-cone color="#3366ff" radius-bottom="0.05" height="1.0" position="0 -0.4 0" rotation="-30 0 0"></a-cone>
-      <a-text value="N" color="#4d94ff" position="-0.7 0.3 0" align="center" width="6"></a-text>
-
-      <!-- Сила тертя (f) - з точки дотику, паралельно площині, проти руху -->
-      <a-cone color="#33cc33" radius-bottom="0.05" height="0.8" position="0 -0.4 0" rotation="-30 180 0"></a-cone>
-      <a-text value="f" color="#4dff4d" position="0.7 -0.2 0" align="center" width="6"></a-text>
-    </a-entity>
-
-  </a-scene>
+        </a-entity>
+    </a-scene>
 </body>
 </html>
