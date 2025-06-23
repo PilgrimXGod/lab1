@@ -11,8 +11,11 @@
 <body>
     <div class="example-container">
         <!-- Сцена MindAR. imageTargetSrc вказує на скомпільований маркер -->
-        <a-scene mindar-aframe="imageTargetSrc: ./assets/targets.mind; autoStart: false; uiScanning: #scanning; uiLoading: no;"
-                 embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+        <a-scene mindar-aframe="imageTargetSrc: ./assets/targets.mind;"
+                 color-space="sRGB" 
+                 renderer="colorManagement: true, physicallyCorrectLights" 
+                 vr-mode-ui="enabled: false" 
+                 device-orientation-permission-ui="enabled: false">
             
             <!-- Елементи інтерфейсу для сканування -->
             <div id="scanning" class="mindar-ui-overlay">
