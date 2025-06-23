@@ -1,89 +1,121 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Giza Pyramids AR (Three.js) - Correct Library</title>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Храмовий комплекс Гізи з Three.js та MindAR</title>
     <style>
-        html, body { margin: 0; overflow: hidden; }
-        #container { position: relative; width: 100%; height: 100%; }
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #ar-container {
+        width: 100%;
+        height: 100vh;
+      }
     </style>
-</head>
-<body>
-    <div id="container"></div>
+    <!-- Підключення бібліотеки Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+    <!-- Підключення бібліотеки MindAR для AR (версія для Three.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image-three.prod.js"></script>
+  </head>
+  <body>
+    <div id="ar-container"></div>
 
-    <!-- ЗМІНА: Вказано правильну назву бібліотеки -->
-<script type="importmap">
-{
-    "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-        "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
-    }
-}
-</script>
+    <script>
+      /* 
+         1. Ініціалізація MindAR: 
+         Передається шлях до файлу маркеру (.mind), який необхідно згенерувати
+         за допомогою генератора AR.js: 
+         https://jeromeetienne.github.io/AR.js/three.js/examples/markertraining/examples/generator.html
+      */
+      const mindarThree = new window.MINDAR.IMAGE.MindARThree({
+        container: document.querySelector("#ar-container"),
+        imageTargetSrc: './assets/targets.mind' // Замініть на відносний шлях до Вашого маркеру
+      });
+      const { renderer, scene, camera } = mindarThree;
 
-<script type="module">
-import * as THREE from 'three';
-import { MindARThree } from 'mindar-image-three';
+      // 2. Додавання базового освітлення
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+      directionalLight.position.set(0, 1, 1);
+      scene.add(directionalLight);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const start = async () => {
-        const mindarThree = new MindARThree({
-            container: document.querySelector("#container"),
-            imageTargetSrc: './assets/targets.mind',
+      // 3. Завантаження «цегляної» текстури з колекції A-Frame.
+      const textureLoader = new THREE.TextureLoader();
+      const brickTexture = textureLoader.load(
+        'https://raw.githubusercontent.com/aframevr/sample-assets/master/assets/images/bricks/bricks_diffuse.jpg'
+      );
+
+      /* 
+         Функція для створення піраміди.
+         Ми використовуємо ConeGeometry з 4 сегментами, що створює форму піраміди
+         із квадратною основою (повертаємо на 45° для вирівнювання сторін).
+         Параметри:
+           • baseLength – «довжина» сторони піраміди (за схемою, наприклад, 230 для Хеопса)
+           • height – висота піраміди.
+         Для позначення верхівки додається невелика сфера, пофарбована в золотавий колір.
+      */
+      function createPyramid(baseLength, height) {
+        // Створюємо піраміду: діаметр бази – baseLength/√2 (щоб врахувати обертання)
+        const geometry = new THREE.ConeGeometry(baseLength / Math.sqrt(2), height, 4);
+        geometry.rotateY(Math.PI / 4); // обертання для вирівнювання основи
+        const material = new THREE.MeshStandardMaterial({
+          map: brickTexture
         });
-        const { renderer, scene, camera } = mindarThree;
+        const pyramid = new THREE.Mesh(geometry, material);
 
-        const textureLoader = new THREE.TextureLoader();
-        const sandTexture = textureLoader.load('./assets/sandstone.jpg');
+        // Додавання «золотистої» верхівки: невелика сфера
+        const apexGeometry = new THREE.SphereGeometry(baseLength / 20, 16, 16);
+        const apexMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
+        const apex = new THREE.Mesh(apexGeometry, apexMaterial);
+        apex.position.y = height; // розміщуємо на вершині піраміди
+        pyramid.add(apex);
+        return pyramid;
+      }
 
-        function createPyramid(height, baseSide) {
-            const pyramidGroup = new THREE.Group();
-            const baseRadius = baseSide / 2;
-            const pyramidGeometry = new THREE.ConeGeometry(baseRadius, height, 4);
-            const pyramidMaterial = new THREE.MeshStandardMaterial({ map: sandTexture });
-            const pyramidMesh = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
-            pyramidMesh.position.y = height / 2;
-            pyramidMesh.rotation.y = Math.PI / 4;
+      // 4. Створення трьох пірамід відповідно до завдання:
+      // Хеопс: висота – 145 м, сторона – 230 м (центральна піраміда)
+      const pyramidKhufu = createPyramid(230, 145);
+      pyramidKhufu.position.set(0, 0, 0);
+      scene.add(pyramidKhufu);
 
-            const capHeight = height * 0.1;
-            const capRadius = baseRadius * 0.1;
-            const capGeometry = new THREE.ConeGeometry(capRadius, capHeight, 4);
-            const capMaterial = new THREE.MeshStandardMaterial({ color: 'gold' });
-            const capMesh = new THREE.Mesh(capGeometry, capMaterial);
-            capMesh.position.y = height - (capHeight / 2);
-            capMesh.rotation.y = Math.PI / 4;
+      // Хефрен: висота – 135 м, сторона – 210 м; розміщуємо трохи ліворуч
+      const pyramidKhafre = createPyramid(210, 135);
+      pyramidKhafre.position.set(-300, 0, -100);
+      scene.add(pyramidKhafre);
 
-            pyramidGroup.add(pyramidMesh);
-            pyramidGroup.add(capMesh);
-            return pyramidGroup;
-        }
+      // Мікеріна: висота – 65 м, сторона – 100 м; розміщуємо трохи праворуч
+      const pyramidMenkaure = createPyramid(100, 65);
+      pyramidMenkaure.position.set(300, 0, -100);
+      scene.add(pyramidMenkaure);
 
-        const pyramidComplex = new THREE.Group();
-        const scale = 0.01;
-        const khufu = createPyramid(145 * scale, 230 * scale);
-        khufu.position.set(0.25, 0, -0.35);
-        const khafre = createPyramid(135 * scale, 210 * scale);
-        khafre.position.set(0, 0, 0);
-        const menkaure = createPyramid(65 * scale, 100 * scale);
-        menkaure.position.set(-0.2, 0, 0.4);
-        pyramidComplex.add(khufu);
-        pyramidComplex.add(khafre);
-        pyramidComplex.add(menkaure);
+      /* 
+         5. Додавання анімації «наїжджання» камери на центральну піраміду.
+         У даному прикладі ми анімуємо позицію камери від початкової точки (наприклад, Z = 500)
+         до позиції, яка ближча до піраміди (Z = 100). 
+         Зверніть увагу: у AR-сцені позиція камери зазвичай визначається зображенням з камери пристрою,
+         але для демонстрації можна анімувати камеру при перегляді через комп’ютер.
+      */
+      let cameraStartZ = 500;
+      let cameraEndZ = 100;
+      camera.position.set(0, 150, cameraStartZ); // висота камери трохи вище піраміди
+      const animationDuration = 5000; // тривалість анімації в мілісекундах
+      let startTime = null;
+      function animateCamera(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / animationDuration, 1);
+        camera.position.z = cameraStartZ - (cameraStartZ - cameraEndZ) * progress;
+        if (progress < 1) requestAnimationFrame(animateCamera);
+      }
+      requestAnimationFrame(animateCamera);
 
-        const anchor = mindarThree.addAnchor(0);
-        anchor.group.add(pyramidComplex);
-
-        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-        scene.add(light);
-
-        await mindarThree.start();
-        renderer.setAnimationLoop(() => {
-            renderer.render(scene, camera);
-        });
-    }
-    start();
-});
-</script>
-</body>
+      // 6. Старт системи MindAR і циклу анімації.
+      mindarThree.start();
+      renderer.setAnimationLoop(() => {
+        renderer.render(scene, camera);
+      });
+    </script>
+  </body>
 </html>
