@@ -2,19 +2,16 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Giza Pyramids AR (Three.js + MindAR)</title>
+    <title>Giza Pyramids AR (Three.js) - Final Version</title>
     <style>
-        body { margin: 0; }
-        #container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-        }
+        html, body { margin: 0; overflow: hidden; }
+        #container { position: relative; width: 100%; height: 100%; }
     </style>
 </head>
 <body>
     <div id="container"></div>
+
+    <!-- 1. Імпорти: підключаємо Three.js та спеціалізовану бібліотеку MindAR для розпізнавання зображень -->
     <script type="importmap">
         {
             "imports": {
@@ -23,20 +20,24 @@
             }
         }
     </script>
+
     <script type="module">
         import * as THREE from 'three';
+        // Імпортуємо головний клас з правильної бібліотеки
         import { MindARThree } from 'mindar-image-three';
 
+        // Чекаємо, поки DOM буде готовий
         document.addEventListener('DOMContentLoaded', () => {
             const start = async() => {
-                // 1. Ініціалізація MindAR
+                // 2. Ініціалізація MindAR: передаємо контейнер та шлях до файлу маркера.
+                // Якщо тут буде помилка, камера не запуститься.
                 const mindarThree = new MindARThree({
                     container: document.querySelector("#container"),
                     imageTargetSrc: './assets/targets.mind',
                 });
                 const { renderer, scene, camera } = mindarThree;
 
-                // 2. Функція для створення піраміди (така сама, як у VR)
+                // 3. Створення 3D-моделі (код залишається без змін)
                 const textureLoader = new THREE.TextureLoader();
                 const sandTexture = textureLoader.load('./assets/sandstone.jpg');
                 
@@ -62,33 +63,25 @@
                     return pyramidGroup;
                 }
 
-                // 3. Створення комплексу пірамід (дуже маленький масштаб для AR)
                 const pyramidComplex = new THREE.Group();
-                const scale = 0.01; // Масштаб 1:100
-
+                const scale = 0.01;
                 const khufu = createPyramid(145 * scale, 230 * scale);
                 khufu.position.set(0.25, 0, -0.35);
-
                 const khafre = createPyramid(135 * scale, 210 * scale);
                 khafre.position.set(0, 0, 0);
-
                 const menkaure = createPyramid(65 * scale, 100 * scale);
                 menkaure.position.set(-0.2, 0, 0.4);
-
                 pyramidComplex.add(khufu);
                 pyramidComplex.add(khafre);
                 pyramidComplex.add(menkaure);
 
-                // 4. Створення "якоря" (anchor) і додавання до нього моделі
-                // Якір - це точка в просторі, прив'язана до маркера (targetIndex: 0)
+                // 4. Додавання моделі до "якоря", прив'язаного до маркера
                 const anchor = mindarThree.addAnchor(0);
-                anchor.group.add(pyramidComplex); // Додаємо наш комплекс до групи якоря
-
-                // Додаємо освітлення до сцени
+                anchor.group.add(pyramidComplex);
                 const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
                 scene.add(light);
                 
-                // 5. Запуск MindAR
+                // 5. Запуск AR-сесії
                 await mindarThree.start();
                 renderer.setAnimationLoop(() => {
                     renderer.render(scene, camera);
