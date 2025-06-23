@@ -23,17 +23,15 @@
 
     <script>
       /* 
-         1. Ініціалізація MindAR: 
-         Передається шлях до файлу маркеру (.mind), який необхідно згенерувати
-         за допомогою генератора AR.js: 
-         https://jeromeetienne.github.io/AR.js/three.js/examples/markertraining/examples/generator.html
+         1. Ініціалізація MindAR:
+         Шлях до файлу маркера (.mind) необхідно згенерувати за допомогою AR.js-генератора.
       */
       const mindarThree = new window.MINDAR.IMAGE.MindARThree({
         container: document.querySelector("#ar-container"),
-        imageTargetSrc: './assets/targets.mind' // Замініть на відносний шлях до Вашого маркеру
+        imageTargetSrc: './assets/targets.mind' // Вкажіть відносний шлях до Вашого маркера
       });
       const { renderer, scene, camera } = mindarThree;
-
+      
       // 2. Додавання базового освітлення
       const ambientLight = new THREE.AmbientLight(0xffffff, 1);
       scene.add(ambientLight);
@@ -41,77 +39,50 @@
       directionalLight.position.set(0, 1, 1);
       scene.add(directionalLight);
 
-      // 3. Завантаження «цегляної» текстури з колекції A-Frame.
+      // 3. Завантаження «цегляної» текстури
       const textureLoader = new THREE.TextureLoader();
-      const brickTexture = textureLoader.load(
-        './assets/sandstone.jpg'
-      );
-
+      const brickTexture = textureLoader.load('./assets/sandstone.jpg');
+      
       /* 
          Функція для створення піраміди.
-         Ми використовуємо ConeGeometry з 4 сегментами, що створює форму піраміди
-         із квадратною основою (повертаємо на 45° для вирівнювання сторін).
-         Параметри:
-           • baseLength – «довжина» сторони піраміди (за схемою, наприклад, 230 для Хеопса)
-           • height – висота піраміди.
-         Для позначення верхівки додається невелика сфера, пофарбована в золотавий колір.
+         Використовуємо ConeGeometry з 4 сегментами, що створює форму піраміди із квадратною основою.
+         До піраміди додається апекс у вигляді сфери, пофарбованої в золотий.
       */
       function createPyramid(baseLength, height) {
-        // Створюємо піраміду: діаметр бази – baseLength/√2 (щоб врахувати обертання)
+        // Обчислюємо геометрію піраміди та обертаємо її для вирівнювання сторін
         const geometry = new THREE.ConeGeometry(baseLength / Math.sqrt(2), height, 4);
-        geometry.rotateY(Math.PI / 4); // обертання для вирівнювання основи
-        const material = new THREE.MeshStandardMaterial({
-          map: brickTexture
-        });
+        geometry.rotateY(Math.PI / 4);
+        const material = new THREE.MeshStandardMaterial({ map: brickTexture });
         const pyramid = new THREE.Mesh(geometry, material);
-
-        // Додавання «золотистої» верхівки: невелика сфера
+        
+        // Створюємо верхівку піраміди – невелику сферу з золотим кольором
         const apexGeometry = new THREE.SphereGeometry(baseLength / 20, 16, 16);
         const apexMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
         const apex = new THREE.Mesh(apexGeometry, apexMaterial);
-        apex.position.y = height; // розміщуємо на вершині піраміди
+        apex.position.y = height;
         pyramid.add(apex);
         return pyramid;
       }
 
-      // 4. Створення трьох пірамід відповідно до завдання:
-      // Хеопс: висота – 145 м, сторона – 230 м (центральна піраміда)
-      const pyramidKhufu = createPyramid(230, 145);
+      // 4. Створення моделей пірамід (розміри відповідно до завдання)
+      const pyramidKhufu = createPyramid(230, 145);    // Хеопс
+      const pyramidKhafre = createPyramid(210, 135);   // Хефрен
+      const pyramidMenkaure = createPyramid(100, 65);    // Мікеріна
+
+      // 5. Створюємо якорь для маркера (номер 0 – перший цільовий маркер)
+      const anchor = mindarThree.addAnchor(0);
+      
+      // Додаємо піраміди до групи якоря – вони з'являться тільки при виявленні маркера
+      anchor.group.add(pyramidKhufu);
+      anchor.group.add(pyramidKhafre);
+      anchor.group.add(pyramidMenkaure);
+
+      // Розташування об’єктів (відносно координат групи якоря)
       pyramidKhufu.position.set(0, 0, 0);
-      scene.add(pyramidKhufu);
-
-      // Хефрен: висота – 135 м, сторона – 210 м; розміщуємо трохи ліворуч
-      const pyramidKhafre = createPyramid(210, 135);
       pyramidKhafre.position.set(-300, 0, -100);
-      scene.add(pyramidKhafre);
-
-      // Мікеріна: висота – 65 м, сторона – 100 м; розміщуємо трохи праворуч
-      const pyramidMenkaure = createPyramid(100, 65);
       pyramidMenkaure.position.set(300, 0, -100);
-      scene.add(pyramidMenkaure);
 
-      /* 
-         5. Додавання анімації «наїжджання» камери на центральну піраміду.
-         У даному прикладі ми анімуємо позицію камери від початкової точки (наприклад, Z = 500)
-         до позиції, яка ближча до піраміди (Z = 100). 
-         Зверніть увагу: у AR-сцені позиція камери зазвичай визначається зображенням з камери пристрою,
-         але для демонстрації можна анімувати камеру при перегляді через комп’ютер.
-      */
-      let cameraStartZ = 500;
-      let cameraEndZ = 100;
-      camera.position.set(0, 150, cameraStartZ); // висота камери трохи вище піраміди
-      const animationDuration = 5000; // тривалість анімації в мілісекундах
-      let startTime = null;
-      function animateCamera(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-        const progress = Math.min(elapsed / animationDuration, 1);
-        camera.position.z = cameraStartZ - (cameraStartZ - cameraEndZ) * progress;
-        if (progress < 1) requestAnimationFrame(animateCamera);
-      }
-      requestAnimationFrame(animateCamera);
-
-      // 6. Старт системи MindAR і циклу анімації.
+      // 6. Старт системи MindAR та цикл рендерингу
       mindarThree.start();
       renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
