@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Giza Pyramids AR (Three.js + MindAR)</title>
+    <style>
+        body { margin: 0; }
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+                "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mind-ar-image-three.prod.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { MindARThree } from 'mindar-image-three';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const start = async() => {
+                // 1. Ініціалізація MindAR
+                const mindarThree = new MindARThree({
+                    container: document.querySelector("#container"),
+                    imageTargetSrc: './assets/targets.mind',
+                });
+                const { renderer, scene, camera } = mindarThree;
+
+                // 2. Функція для створення піраміди (така сама, як у VR)
+                const textureLoader = new THREE.TextureLoader();
+                const sandTexture = textureLoader.load('./assets/sandstone.jpg');
+                
+                function createPyramid(height, baseSide) {
+                    const pyramidGroup = new THREE.Group();
+                    const baseRadius = baseSide / 2;
+                    const pyramidGeometry = new THREE.ConeGeometry(baseRadius, height, 4);
+                    const pyramidMaterial = new THREE.MeshStandardMaterial({ map: sandTexture });
+                    const pyramidMesh = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
+                    pyramidMesh.position.y = height / 2;
+                    pyramidMesh.rotation.y = Math.PI / 4;
+                    
+                    const capHeight = height * 0.1;
+                    const capRadius = baseRadius * 0.1;
+                    const capGeometry = new THREE.ConeGeometry(capRadius, capHeight, 4);
+                    const capMaterial = new THREE.MeshStandardMaterial({ color: 'gold' });
+                    const capMesh = new THREE.Mesh(capGeometry, capMaterial);
+                    capMesh.position.y = height - (capHeight / 2);
+                    capMesh.rotation.y = Math.PI / 4;
+
+                    pyramidGroup.add(pyramidMesh);
+                    pyramidGroup.add(capMesh);
+                    return pyramidGroup;
+                }
+
+                // 3. Створення комплексу пірамід (дуже маленький масштаб для AR)
+                const pyramidComplex = new THREE.Group();
+                const scale = 0.01; // Масштаб 1:100
+
+                const khufu = createPyramid(145 * scale, 230 * scale);
+                khufu.position.set(0.25, 0, -0.35);
+
+                const khafre = createPyramid(135 * scale, 210 * scale);
+                khafre.position.set(0, 0, 0);
+
+                const menkaure = createPyramid(65 * scale, 100 * scale);
+                menkaure.position.set(-0.2, 0, 0.4);
+
+                pyramidComplex.add(khufu);
+                pyramidComplex.add(khafre);
+                pyramidComplex.add(menkaure);
+
+                // 4. Створення "якоря" (anchor) і додавання до нього моделі
+                // Якір - це точка в просторі, прив'язана до маркера (targetIndex: 0)
+                const anchor = mindarThree.addAnchor(0);
+                anchor.group.add(pyramidComplex); // Додаємо наш комплекс до групи якоря
+
+                // Додаємо освітлення до сцени
+                const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+                scene.add(light);
+                
+                // 5. Запуск MindAR
+                await mindarThree.start();
+                renderer.setAnimationLoop(() => {
+                    renderer.render(scene, camera);
+                });
+            }
+            start();
+        });
+    </script>
+</body>
+</html>
