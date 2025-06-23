@@ -1,53 +1,47 @@
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-aframe.prod.js"></script>
-    <title>Giza Pyramids AR (MindAR)</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- ЗМІНА 1: Оновлені версії скриптів A-Frame та MindAR з робочого прикладу -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 </head>
 <body>
-    <!-- 
-        Ключові зміни:
-        1. `mindar-aframe` тепер має `autoStart: true` (або просто не вказано, бо це значення за замовчуванням).
-        2. Видалено зайвий JavaScript для ручного запуску.
-        3. Видалено інтерфейс сканування (`uiScanning`) для максимальної простоти.
-    -->
-    <a-scene mindar-aframe="imageTargetSrc: ./assets/targets.mind;" 
-             color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
-             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-        
-        <!-- Асети -->
-        <a-assets>
-            <img id="sandstone" src="./assets/sandstone.jpg">
-        </a-assets>
+  <!-- ЗМІНА 2: Використовуємо компонент `mindar-image` та прибираємо зайві UI атрибути (вони увімкнені за замовчуванням у новій версії) -->
+  <a-scene 
+    mindar-image="imageTargetSrc: assets/targets.mind;"
+    color-space="sRGB" 
+    renderer="colorManagement: true, physicallyCorrectLights" 
+    vr-mode-ui="enabled: false" 
+    device-orientation-permission-ui="enabled: false">
+    
+    <a-assets>
+      <img id="sandstone" src="./assets/sandstone.jpg" crossorigin="anonymous">
+    </a-assets>
 
-        <!-- Цільовий маркер (перший у файлі .mind, тому targetIndex="0") -->
-        <a-entity mindar-aframe-target="targetIndex: 0">
-            <!-- Наша модель пірамід. Масштаб та позиція ті ж самі -->
+    <!-- Сутність, прив'язана до маркера (індекс 0 з файлу .mind) -->
+    <a-entity mindar-image-target="targetIndex: 0">
+      
+     <!-- Модель пірамід, яка з'явиться на маркері -->
             <a-entity id="pyramid-complex" position="0 0 0" scale="0.1 0.1 0.1" rotation="0 0 0">
-            
-                <!-- Піраміда Хеопса (1) -->
                 <a-entity id="khufu-pyramid" position="2.5 0 -3.5">
                     <a-cone src="#sandstone" height="1.45" radius-bottom="1.15" segments-radial="4" position="0 0.725 0"></a-cone>
                     <a-cone color="gold" height="0.15" radius-bottom="0.115" segments-radial="4" position="0 1.375 0"></a-cone>
                 </a-entity>
-
-                <!-- Піраміда Хефрена (2) -->
                 <a-entity id="khafre-pyramid" position="0 0 0">
                     <a-cone src="#sandstone" height="1.35" radius-bottom="1.05" segments-radial="4" position="0 0.675 0"></a-cone>
                     <a-cone color="gold" height="0.135" radius-bottom="0.105" segments-radial="4" position="0 1.2825 0"></a-cone>
                 </a-entity>
-
-                <!-- Піраміда Мікеріна (3) -->
                 <a-entity id="menkaure-pyramid" position="-2 0 4">
                     <a-cone src="#sandstone" height="0.65" radius-bottom="0.5" segments-radial="4" position="0 0.325 0"></a-cone>
                     <a-cone color="gold" height="0.065" radius-bottom="0.05" segments-radial="4" position="0 0.6175 0"></a-cone>
                 </a-entity>
-
             </a-entity>
-        </a-entity>
-        <!-- Камера -->
-        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-    </a-scene>
+    </a-entity>
+    
+    <!-- ЗМІНА 3: Камера, як у робочому прикладі, розміщена в кінці і з вимкненим керуванням -->
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+  </a-scene>
 </body>
 </html>
