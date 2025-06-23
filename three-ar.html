@@ -12,79 +12,78 @@
     <div id="container"></div>
 
     <!-- ЗМІНА: Вказано правильну назву бібліотеки -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-                "mindar": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
-            }
-        }
-    </script>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+        "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+    }
+}
+</script>
 
-    <script type="module">
-        import * as THREE from 'three';
-        // Імпортуємо головний клас з правильної бібліотеки
-        import { MindARThree } from 'mindar';
+<script type="module">
+import * as THREE from 'three';
+import { MindARThree } from 'mindar-image-three';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const start = async() => {
-                const mindarThree = new MindARThree({
-                    container: document.querySelector("#container"),
-                    imageTargetSrc: './assets/targets.mind',
-                });
-                const { renderer, scene, camera } = mindarThree;
-
-                // Код для створення пірамід залишається без змін
-                const textureLoader = new THREE.TextureLoader();
-                const sandTexture = textureLoader.load('./assets/sandstone.jpg');
-                
-                function createPyramid(height, baseSide) {
-                    const pyramidGroup = new THREE.Group();
-                    const baseRadius = baseSide / 2;
-                    const pyramidGeometry = new THREE.ConeGeometry(baseRadius, height, 4);
-                    const pyramidMaterial = new THREE.MeshStandardMaterial({ map: sandTexture });
-                    const pyramidMesh = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
-                    pyramidMesh.position.y = height / 2;
-                    pyramidMesh.rotation.y = Math.PI / 4;
-                    
-                    const capHeight = height * 0.1;
-                    const capRadius = baseRadius * 0.1;
-                    const capGeometry = new THREE.ConeGeometry(capRadius, capHeight, 4);
-                    const capMaterial = new THREE.MeshStandardMaterial({ color: 'gold' });
-                    const capMesh = new THREE.Mesh(capGeometry, capMaterial);
-                    capMesh.position.y = height - (capHeight / 2);
-                    capMesh.rotation.y = Math.PI / 4;
-
-                    pyramidGroup.add(pyramidMesh);
-                    pyramidGroup.add(capMesh);
-                    return pyramidGroup;
-                }
-
-                const pyramidComplex = new THREE.Group();
-                const scale = 0.01;
-                const khufu = createPyramid(145 * scale, 230 * scale);
-                khufu.position.set(0.25, 0, -0.35);
-                const khafre = createPyramid(135 * scale, 210 * scale);
-                khafre.position.set(0, 0, 0);
-                const menkaure = createPyramid(65 * scale, 100 * scale);
-                menkaure.position.set(-0.2, 0, 0.4);
-                pyramidComplex.add(khufu);
-                pyramidComplex.add(khfre);
-                pyramidComplex.add(menkaure);
-                
-                const anchor = mindarThree.addAnchor(0);
-                anchor.group.add(pyramidComplex);
-                const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-                scene.add(light);
-                
-                await mindarThree.start();
-                renderer.setAnimationLoop(() => {
-                    renderer.render(scene, camera);
-                });
-            }
-            start();
+document.addEventListener('DOMContentLoaded', () => {
+    const start = async () => {
+        const mindarThree = new MindARThree({
+            container: document.querySelector("#container"),
+            imageTargetSrc: './assets/targets.mind',
         });
-    </script>
+        const { renderer, scene, camera } = mindarThree;
+
+        const textureLoader = new THREE.TextureLoader();
+        const sandTexture = textureLoader.load('./assets/sandstone.jpg');
+
+        function createPyramid(height, baseSide) {
+            const pyramidGroup = new THREE.Group();
+            const baseRadius = baseSide / 2;
+            const pyramidGeometry = new THREE.ConeGeometry(baseRadius, height, 4);
+            const pyramidMaterial = new THREE.MeshStandardMaterial({ map: sandTexture });
+            const pyramidMesh = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
+            pyramidMesh.position.y = height / 2;
+            pyramidMesh.rotation.y = Math.PI / 4;
+
+            const capHeight = height * 0.1;
+            const capRadius = baseRadius * 0.1;
+            const capGeometry = new THREE.ConeGeometry(capRadius, capHeight, 4);
+            const capMaterial = new THREE.MeshStandardMaterial({ color: 'gold' });
+            const capMesh = new THREE.Mesh(capGeometry, capMaterial);
+            capMesh.position.y = height - (capHeight / 2);
+            capMesh.rotation.y = Math.PI / 4;
+
+            pyramidGroup.add(pyramidMesh);
+            pyramidGroup.add(capMesh);
+            return pyramidGroup;
+        }
+
+        const pyramidComplex = new THREE.Group();
+        const scale = 0.01;
+        const khufu = createPyramid(145 * scale, 230 * scale);
+        khufu.position.set(0.25, 0, -0.35);
+        const khafre = createPyramid(135 * scale, 210 * scale);
+        khafre.position.set(0, 0, 0);
+        const menkaure = createPyramid(65 * scale, 100 * scale);
+        menkaure.position.set(-0.2, 0, 0.4);
+        pyramidComplex.add(khufu);
+        pyramidComplex.add(khafre);
+        pyramidComplex.add(menkaure);
+
+        const anchor = mindarThree.addAnchor(0);
+        anchor.group.add(pyramidComplex);
+
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        scene.add(light);
+
+        await mindarThree.start();
+        renderer.setAnimationLoop(() => {
+            renderer.render(scene, camera);
+        });
+    }
+    start();
+});
+</script>
 </body>
 </html>
