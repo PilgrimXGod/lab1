@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Тест Анімації</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-aframe.prod.js"></script>
+    <title>MindAR Clean Test</title>
 </head>
 <body>
-    <a-scene background="color: #grey">
-        <a-box position="-2 1 -3" color="tomato">
-            <a-animation
-                attribute="position"
-                to="2 1 -3"
-                dur="2000"
-                direction="alternate"
-                repeat="indefinite">
-            </a-animation>
-        </a-box>
+    <!-- 
+        Ця сцена завантажує 100% робочий маркер з зовнішнього джерела.
+        Якщо цей код не працює, проблема не в файлі маркера, а в налаштуваннях браузера/пристрою.
+    -->
+    <a-scene mindar-aframe="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/targets.mind;" 
+             color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
+             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+        
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <!-- Сутність, яка прив'язується до маркера -->
+        <a-entity mindar-aframe-target="targetIndex: 0">
+            <!-- Проста тестова модель - червоний куб -->
+            <a-box color="red" position="0 0.5 0"></a-box>
+        </a-entity>
     </a-scene>
 </body>
 </html>
