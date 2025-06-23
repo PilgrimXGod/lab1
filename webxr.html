@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Доповнена реальність з WebXR</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Сцену створюємо всередині mjs‑модуля -->
+    <script type="module">
+      // Імпортуємо Three.js та ARButton
+      import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.module.js";
+      import { ARButton } from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/jsm/webxr/ARButton.js";
+
+      // Конфігурація базових параметрів
+      const scale = 0.01; // коефіцієнт масштабування для адаптації розмірів під AR
+
+      // Створюємо сцену Three.js
+      const scene = new THREE.Scene();
+
+      // Камера – її положення буде переважно визначене AR сесією,
+      // але для початкового рендерингу потрібна звичайна камера.
+      const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
+
+      // Рендерер
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.xr.enabled = true; // Включення підтримки WebXR
+      document.body.appendChild(renderer.domElement);
+
+      // Додаємо ARButton для запуску AR-сесії
+      document.body.appendChild(
+        ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
+      );
+
+      // Додаємо базове оточення – освітлення
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+      directionalLight.position.set(0, 1, 1);
+      scene.add(directionalLight);
+
+      // Завантаження текстури "цегли" з колекції A-Frame
+      const textureLoader = new THREE.TextureLoader();
+      const brickTexture = textureLoader.load(
+        "https://raw.githubusercontent.com/aframevr/sample-assets/master/assets/images/bricks/bricks_diffuse.jpg"
+      );
+
+      /**
+       * Функція createPyramid створює піраміду із квадратною основою.
+       * Параметри:
+       *   baseLength – довжина сторони бази;
+       *   height – висота піраміди.
+       *
+       * До піраміди додається невелика сфера, що символізує верхівку пофарбовану в золотий.
+       */
+      function createPyramid(baseLength, height) {
+        // Використовуємо ConeGeometry з 4 боками; обертання на 45° для вирівнювання сторін
+        const geometry = new THREE.ConeGeometry(baseLength / Math.sqrt(2), height, 4);
+        geometry.rotateY(Math.PI / 4);
+        const material = new THREE.MeshStandardMaterial({
+          map: brickTexture,
+        });
+        const pyramid = new THREE.Mesh(geometry, material);
+
+        // Створюємо апекс – невелику сферу з золотим матеріалом
+        const apexGeometry = new THREE.SphereGeometry(baseLength / 20, 16, 16);
+        const apexMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
+        const apex = new THREE.Mesh(apexGeometry, apexMaterial);
+        apex.position.y = height; // розміщення верхівки на вершині піраміди
+        pyramid.add(apex);
+
+        return pyramid;
+      }
+
+      // Створення пірамід
+      // Хеопс: висота 145 м, сторона 230 м → застосовуємо масштабування
+      const pyramidKhufu = createPyramid(230 * scale, 145 * scale);
+      // Для AR-сцени позиціюємо об'єкти ближче до камери (координати у метрах)
+      pyramidKhufu.position.set(0, 0, -2);
+      scene.add(pyramidKhufu);
+
+      // Хефрен: висота 135 м, сторона 210 м
+      const pyramidKhafre = createPyramid(210 * scale, 135 * scale);
+      pyramidKhafre.position.set(-1.5, 0, -2.5);
+      scene.add(pyramidKhafre);
+
+      // Мікеріна: висота 65 м, сторона 100 м
+      const pyramidMenkaure = createPyramid(100 * scale, 65 * scale);
+      pyramidMenkaure.position.set(1.5, 0, -2.5);
+      scene.add(pyramidMenkaure);
+
+      // Обробка зміни розміру вікна
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Головний цикл рендерингу
+      renderer.setAnimationLoop(() => {
+        renderer.render(scene, camera);
+      });
+    </script>
+  </body>
+</html>
